@@ -1,7 +1,7 @@
 <h1 align="center">Sistema de control de asistencias con reconocimiento facial</h1>
 
 ## Preview Web
-<img src="public/preview.jpeg"/>
+<img src="public/preview.png"/>
 
 ## Registro en exel
 <img src="public/preview-exel.png"/>
