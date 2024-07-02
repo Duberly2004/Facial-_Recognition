@@ -1,4 +1,4 @@
-from flask import Flask ,jsonify,send_from_directory,Response
+from flask import Flask ,jsonify,send_from_directory,Response,request
 from prisma import Prisma
 from flask_cors import CORS
 from functions.face_detector import Face
@@ -51,6 +51,44 @@ async def departments():
     await prisma.disconnect()
     return jsonify(departments_data)
 
+@app.route("/department", methods=["POST"])
+async def create_department():
+    data = request.json
+    prisma = Prisma()
+    await prisma.connect()
+    new_department = await prisma.department.create(
+        data={
+            "name": data["name"]
+        }
+    )
+    await prisma.disconnect()
+    return jsonify({"id": new_department.id, "name": new_department.name}), 201
+
+@app.route("/department/<int:department_id>", methods=["PUT"])
+async def update_department(department_id):
+    data = request.json
+    prisma = Prisma()
+    await prisma.connect()
+    updated_department = await prisma.department.update(
+        where={"id": department_id},
+        data={
+            "name": data["name"]
+        }
+    )
+    await prisma.disconnect()
+    return jsonify({"id": updated_department.id, "name": updated_department.name})
+
+@app.route("/department/<int:department_id>", methods=["DELETE"])
+async def delete_department(department_id):
+    prisma = Prisma()
+    await prisma.connect()
+    await prisma.department.delete(
+        where={"id": department_id}
+    )
+    await prisma.disconnect()
+    return '', 204
+
+
 #Creación de la ruta positions
 @app.route("/positions")
 async def positions():
@@ -66,6 +104,43 @@ async def positions():
     ]
     await prisma.disconnect()
     return jsonify(positions_data)
+
+@app.route("/position", methods=["POST"])
+async def create_position():
+    data = request.json
+    prisma = Prisma()
+    await prisma.connect()
+    new_position = await prisma.position.create(
+        data={
+            "name": data["name"]
+        }
+    )
+    await prisma.disconnect()
+    return jsonify({"id": new_position.id, "name": new_position.name}), 201
+
+@app.route("/position/<int:position_id>", methods=["PUT"])
+async def update_position(position_id):
+    data = request.json
+    prisma = Prisma()
+    await prisma.connect()
+    updated_position = await prisma.position.update(
+        where={"id": position_id},
+        data={
+            "name": data["name"]
+        }
+    )
+    await prisma.disconnect()
+    return jsonify({"id": updated_position.id, "name": updated_position.name})
+
+@app.route("/position/<int:position_id>", methods=["DELETE"])
+async def delete_position(position_id):
+    prisma = Prisma()
+    await prisma.connect()
+    await prisma.position.delete(
+        where={"id": position_id}
+    )
+    await prisma.disconnect()
+    return '', 204
 
 #Creación de la ruta roles
 @app.route("/roles")

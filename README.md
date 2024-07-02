@@ -1,4 +1,5 @@
-<h1 align="center">Sistema de control de asistencias con reconocimiento facial</h1>
+<h1 align="center">"Sistema de Registro de Ingreso y Salida de Personas con Reconocimiento Facial mediante IA"
+</h1>
 
 ## Preview Web
 <img src="public/preview.png"/>
@@ -9,10 +10,8 @@
 ## Módulos
 
 - Módulo de Usuarios
-- Alumnos
-- Profesores
-- Asistencias
-- Cursos
+- Departamentos
+- Cargos
 
 ## Tecnologías
 
