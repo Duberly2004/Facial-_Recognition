@@ -37,29 +37,26 @@ import { listBase } from "@/services/api.service"
 import { useQuery } from "react-query"
 
 
-export type Payment = {
+export type User = {
   id: string
   name: string
   paternal_surname: string
   maternal_surname: string
+  profile_picture_url:string
+  email:string
+  status:number
   role: {
     id:number
     name: string
   }
-  user: {
-    id:number
-    avatar:string
-    email:string
-    status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
-  }
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<User>[] = [
   {
-    accessorKey: "avatar",
+    accessorKey: "profile_picture_url",
     header: "Foto",
     cell: ({ row }) => (
-      <div><UserAvatar src={import.meta.env.VITE_API_URL +"/"+ row.original.user.avatar} name={"AV"}/></div>
+      <div><UserAvatar src={row.original.profile_picture_url} name={"AV"}/></div>
     ),
   },
   {
@@ -75,7 +72,7 @@ export const columns: ColumnDef<Payment>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.original.user.email}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.original.email}</div>,
   },
   {
     accessorKey: "name",
@@ -96,14 +93,14 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "status",
     header: "Estado",
     cell: ({ row }) => (
-      <div className="capitalize">{getNameStatus(row.original.user.status)}</div>
+      <div className="capitalize">{getNameStatus(row.original.status)}</div>
     ),
   }
 ]
 
-export default function Student() {
+export default function User() {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const fetchData = async ()=> await listBase("students")
+  const fetchData = async ()=> await listBase("users")
   const {data,isLoading,error} = useQuery({queryFn:fetchData})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

@@ -2,7 +2,9 @@ import AppLayout from "@/layouts/AppLayout";
 import AttendaceList from "@/modules/Attendance/AttendaceList";
 import Attendance from "@/modules/Attendance/Attendance";
 import AttendanceCreate from "@/modules/Attendance/AttendanceCreate";
-import Student from "@/modules/student/Student";
+import Department from "@/modules/admin/Department";
+import Position from "@/modules/admin/Position";
+import User from "@/modules/user/User";
 import Setting from "@/pages/Setting";
 const appRouter = [
   {
@@ -10,7 +12,7 @@ const appRouter = [
     element: <AppLayout />,
     children: [
       {
-        path: "attendances",
+        path: "registers",
         element: <Attendance />,
         children:[
           {
@@ -18,18 +20,28 @@ const appRouter = [
             element: <AttendaceList/>,
           },
           {
-            path: "/attendances/create",
+            path: "/registers/create",
             element: <AttendanceCreate/>,
           },
         ]
       },
       {
-        path: "/students",
-        element: <Student />,
+        path: "/users",
+        element: <User />,
       },
       {
         path: "/settings",
         element: <Setting />,
+        children:[
+          {
+            path: "/settings/departments",
+            element: <Department/>,
+          },
+          {
+            path: "/settings/positions",
+            element: <Position/>,
+          },
+        ]
       },
     ]
 }]

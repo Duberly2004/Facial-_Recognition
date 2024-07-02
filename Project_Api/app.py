@@ -1,104 +1,259 @@
-from flask import Flask,request,abort,send_from_directory
-from flask_cors import CORS, cross_origin
-from flask import Response
+from flask import Flask ,jsonify,send_from_directory,Response
+from prisma import Prisma
+from flask_cors import CORS
 from functions.face_detector import Face
-from dao.DAOStudent import DAOStudent
-from dao.DAOTeacher import DAOTeacher
-from dao.DAOCareer import DAOCareer
-from dao.DAOSection import DAOSection
-from dao.DAOCourse import DAOCourse
-from dao.DAOAttendance import DAOAttendance
-from dao.DAOAttendanceStudent import DAOAttendanceStudent
-app = Flask(__name__,static_folder='images')
+import os
+import datetime
+#Creación de la aplicación en flask
+app = Flask(__name__,static_folder='uploads')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+#Creación de la ruta ping
 @app.route("/")
-@cross_origin()
-def helloWorld():
-  return "Hello, cross-origin-world!"
+def home():
+    return "Server listening"
 
-#---------Student routes------------
-@app.route('/students')
-def students_list():
-    users = DAOStudent.list(None)
-    if(users): return users
-    return []
+#Creación de la ruta users
+@app.route("/users")
+async def users():
+    prisma = Prisma()
+    await prisma.connect()
+    users_response = await prisma.user.find_many()
+    users_data = [
+        {
+            "id":user.id,
+            "email":user.email,
+            "password":user.password,
+            "name":user.name,
+            "profile_picture_url":os.environ.get("API_URL")  +"/"+ user.profile_picture_url,
+            "paternal_surname":user.paternal_surname,
+            "maternal_surname":user.maternal_surname,
+            "status":user.status
+        }for user in users_response
+    ]
+    await prisma.disconnect()
+    return jsonify(users_data)
 
-#---------Student routes------------
-@app.route('/teachers')
-def teachers_list():
-    teachers = DAOTeacher.list(None)
-    if(teachers): return teachers
-    return []
+#Creación de la ruta departments
+@app.route("/departments")
+async def departments():
+    prisma = Prisma()
+    await prisma.connect()
+    department_response = await prisma.department.find_many()
+    departments_data = [
+        {
+            "id":department.id,
+            "name":department.name
 
-#---------Career routes------------
-@app.route('/careers')
-def careers_list():
-    careers = DAOCareer.list(None)
-    if(careers): return careers
-    return []
+        }for department in department_response
+    ]
+    await prisma.disconnect()
+    return jsonify(departments_data)
 
-#---------Section routes------------
-@app.route('/career/<career_id>/sections')
-def sections_list(career_id):
-    sections = DAOSection.list(None,career_id)
-    if(sections): return sections
-    return []
+#Creación de la ruta positions
+@app.route("/positions")
+async def positions():
+    prisma = Prisma()
+    await prisma.connect()
+    position_response = await prisma.position.find_many()
+    positions_data = [
+        {
+            "id":position.id,
+            "name":position.name
 
-#---------Course routes------------
-@app.route('/career/<career_id>/courses')
-def courses_list(career_id):
-    courses = DAOCourse.list(None,career_id)
-    if(courses): return courses
-    return []
+        }for position in position_response
+    ]
+    await prisma.disconnect()
+    return jsonify(positions_data)
 
-@app.route('/career/<career_id>/course/<id>/')
-def course_list(career_id,id):
-    course = DAOCourse.list(None,career_id,id)
-    if(course): return course[0]
-    return "not found", 404
+#Creación de la ruta roles
+@app.route("/roles")
+async def roles():
+    prisma = Prisma()
+    await prisma.connect()
+    role_response = await prisma.role.find_many()
+    roles_data = [
+        {
+            "id":role.id,
+            "name":role.name
 
-#---------Attendance routes------------
-@app.route('/section/<section_id>/course/<course_id>/attendances')
-def attendances_list(section_id,course_id):
-    attendances = DAOAttendance.list(None,section_id,course_id)
-    if(attendances): return attendances
-    return []
+        }for role in role_response
+    ]
+    await prisma.disconnect()
+    return jsonify(roles_data)
 
-@app.route('/attendance/<id>')
-def attendance_list(id):
-    attendance = DAOAttendance.listForId(None,id)
-    if(attendance): return attendance[0]
-    return "not found", 404
+#Creación de la ruta registros
+@app.route('/registers')
+async def registers():
+    prisma = Prisma()
+    await prisma.connect()
+    register_response = await prisma.register.find_many(include={"user":{"include":{"department":True,"position":True}}})
+    registers_data = [
+        {
+            "id":register.id,
+            "user_id":register.user_id,
+            "date":register.date,
+            "user": {
+                "email":register.user.email,
+                "name":register.user.name,
+                "profile_picture_url":os.environ.get("API_URL") + "/" + register.user.profile_picture_url,
+                "paternal_surname":register.user.paternal_surname,
+                "maternal_surname":register.user.maternal_surname,
+                "department": {
+                    "id":register.user.department.id,
+                    "name":register.user.department.name
+                },
+                "position": {
+                    "id":register.user.position.id,
+                    "name":register.user.position.name
+                }
+            }
+        }for register in register_response
+    ]
+    await prisma.disconnect()
+    return jsonify(registers_data)
 
-@app.route('/attendance', methods=['POST'])
-def create_attendance():
-    data = request.get_json()
-    try:
-        if 'section_id' in  data and 'date' in data and 'section_id' in data and 'course_id' in data and 'career_id' in data:
-            id = DAOAttendance().create(data["date"],data["career_id"],data["section_id"],data["course_id"])
-            return {"id":id}  
-        else : return 'Data is required', 400
-    except Exception as e:
-        abort(500, f"Error al crear la asistencia: {str(e)}")
+@app.route('/video_feed')
+async def video_feed():
+    prisma = Prisma()
+    await prisma.connect()
 
-
-#Attendance Student
-@app.route('/attendances/<id_attendance>/attendancesStudents')
-def attendances_stundent_list(id_attendance):
-    attendances_stundent = DAOAttendanceStudent.list(None,id_attendance)
-    if(attendances_stundent): return attendances_stundent
-    return []
-
-@app.route('/video_feed/<attendance_id>')
-def video_feed(attendance_id):
-    return Response(Face.face_detector(attendance_id),
+    users_response = await prisma.user.find_many(include={"department":True,"position":True})
+    users_data = []
+    for user in users_response:
+        exist = await prisma.register.find_first(where={"user_id":user.id})
+        print(exist)
+        if not exist:
+            print("No exist")
+            users_data.append({
+                "id":user.id,
+                "email":user.email,
+                "password":user.password,
+                "name":user.name,
+                "profile_picture_url":user.profile_picture_url,
+                "paternal_surname":user.paternal_surname,
+                "maternal_surname":user.maternal_surname,
+                "status":user.status,
+                "department": {
+                    "id":user.department.id,
+                    "name":user.department.name
+                },
+                "position": {
+                    "id":user.position.id,
+                    "name":user.position.name
+                }
+            }
+            )
+    await prisma.disconnect()
+    return Response(Face.face_detector(users_data),
       mimetype="multipart/x-mixed-replace; boundary=frame")
 
-@app.route('/images/<path:filename>')
+#Ruta para ejecutar el script
+@app.route('/runScript')
+async def runScript():
+    prisma = Prisma()
+    await prisma.connect()
+    #Creación de los roles
+    if await prisma.role.count()==0:
+        await prisma.role.create_many(data=[
+            {"id":1,"name":"user"},
+            {"id":2,"name":"admin"}
+        ])
+    # Creación de las cargos
+    if await prisma.position.count()==0:
+        await prisma.position.create_many(data=[
+            {"id":1,"name":"Profesor"},
+            {"id":2,"name":"Estudiante"}
+        ])
+    # Creación de los departmentos
+    if await prisma.department.count()==0:
+        await prisma.department.create_many(data=[
+            {"id":1,"name":"Tecnología Digital"},
+            {"id":2,"name":"Quimica y Minería"},
+            {"id":3,"name":"Mecanica y Aviacíón"},
+            {"id":4,"name":"Electronica y Electrecidad"},
+            {"id":5,"name":"Diseño y producción Industrial"}
+        ])
+    # Creacion de los usuarios
+    if await prisma.user.count()==0:
+        await prisma.user.create_many(data=[
+            {"id":1,"email":"duberly.mondragon@tecsup.edu.pe","password":"Duberly##**2004","profile_picture_url":"uploads/duberly-ivan-mondragon-manchay.png","name":"Duberly Ivan","paternal_surname":"Mondragón","maternal_surname":"Manchay","role_id":1,"position_id":2,"department_id":1},
+            {"id":2,"email":"ethan.arredondo@tecsup.edu.pe","password":"Ethan##**2004","profile_picture_url":"uploads/ethan-sebastian-arredondo-yarihuaman.png","name":"Ethan Sebastian","paternal_surname":"Arredondo","maternal_surname":"Yarihuaman","role_id":1,"position_id":2,"department_id":1}
+        ])
+
+    await prisma.disconnect()
+    return "ok"
+
+#Ruta para obtener los datos del script
+@app.route('/getScript')
+async def getScript():
+    prisma = Prisma()
+    await prisma.connect()
+    roles_response = await prisma.role.find_many()
+    position_response = await prisma.position.find_many()
+    department_response = await prisma.department.find_many()
+    users_response = await prisma.user.find_many()
+    roles_data = [
+        {
+            "id":role.id,
+            "name":role.name
+
+        }for role in roles_response
+    ]
+    positions_data = [
+        {
+            "id":position.id,
+            "name":position.name
+
+        }for position in position_response
+    ]
+    departments_data = [
+        {
+            "id":department.id,
+            "name":department.name
+
+        }for department in department_response
+    ]
+    users_data = [
+        {
+            "id":user.id,
+            "email":user.email,
+            "name":user.name,
+            "profile_picture_url":os.environ.get("API_URL") + "/" + user.profile_picture_url,
+            "paternal_surname":user.paternal_surname,
+            "maternal_surname":user.maternal_surname,
+            "status":user.status
+        }for user in users_response
+    ]
+
+    data = {
+        "roles":roles_data,
+        "postitions":positions_data,
+        "departmens":departments_data,
+        "users":users_data,
+    }
+    await prisma.disconnect()
+    return jsonify(data)
+    
+#Ruta para eliminar los datos del script
+@app.route('/deleteScript')
+async def deleteScript():
+    prisma = Prisma()
+    await prisma.connect()
+    #Eliminamos las tablas
+    await prisma.register.delete_many()
+    await prisma.user.delete_many()
+    await prisma.role.delete_many()
+    await prisma.position.delete_many()
+    await prisma.department.delete_many()
+    await prisma.disconnect()
+    return "ok"
+
+@app.route('/uploads/<path:filename>')
 def serve_static(filename):
     return send_from_directory(app.static_folder, filename)
 
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=False)

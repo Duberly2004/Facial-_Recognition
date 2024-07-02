@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { Button } from "../ui/button";
-import { ArrowRightLeft, FilePlus2, Users } from "lucide-react";
+import { ArrowRightLeft, FilePlus2, Settings, Users } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 interface Item {
@@ -16,13 +16,13 @@ interface Item {
 }
 const items: Item[] = [
   {
-    name: "Asistencias",
-    url: "/attendances",
+    name: "Registros",
+    url: "/registers",
     icon: <FilePlus2 />,
   },
   {
-    name: "Alumnos",
-    url: "/students",
+    name: "Usuarios",
+    url: "/users",
     icon: <Users />,
   },
 ]
@@ -38,7 +38,7 @@ export function AppNavbar({ isExpanded, btnUpdateMenuVisibility }: NavbarProps) 
         {items.map((data, index) => (
           <SidebarItem key={index} {...data} isExpanded={isExpanded} />
         ))}
-        {/* <SidebarItem name="Configuración" url="/settings" icon={<Settings />} isExpanded={isExpanded} /> */}
+        <SidebarItem name="Configuración" url="/settings/departments" icon={<Settings />} isExpanded={isExpanded} /> 
       </div>
       <TooltipProvider delayDuration={10}>
         <Tooltip>

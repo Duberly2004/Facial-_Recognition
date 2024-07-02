@@ -1,10 +1,10 @@
-export const getNameStatus=(value:string)=>{
+export const getNameStatus=(value:number)=>{
     switch (value) {
-        case "ACTIVE":
+        case 0:
             return "Activo"
-        case "INACTIVE":
+        case 1:
             return "Inactivo"
-        case "SUSPENDED":
+        case 2:
             return "Suspendido"
         default:
             return ""

@@ -1,7 +1,6 @@
 import BaseSelect from "@/components/selects/BaseSelect";
 import { Button } from "@/components/ui/button";
 import { listBase } from "@/services/api.service";
-import React from "react";
 import { useQuery } from "react-query";
 import { toast } from "sonner";
 import {
@@ -14,68 +13,62 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ILattendace } from "@/lib/interfaces/other";
+import { ILRegister } from "@/lib/interfaces/other";
 import { convertDate } from "@/lib/functions/convert";
-export default function AttendaceList() {
-  const [careerId, setCareerId] = React.useState<number | undefined>();
-  const [sectionId, setSectionId] = React.useState<number | undefined>();
-  const [courseId, setCourseId] = React.useState<number | undefined>();
-  const [endpoint, setEndpoint] = React.useState<string>("");
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-  const fetchData = async () => await listBase(endpoint);
+export default function AttendaceList({show=true}:{show?:boolean}) {
 
-  const { data, isLoading } = useQuery(["attendances", endpoint], fetchData, {
-    enabled: !!endpoint, // solo habilita la consulta cuando el endpoint está definido
-  });
-
-  const onSearch = () => {
-    if (careerId !== undefined && sectionId !== undefined && courseId !== undefined) {
-      setEndpoint(`section/${sectionId}/course/${courseId}/attendances`);
-    } else {
-      toast.error('Llene todos los campos');
-    }
-  };
+  const fetchData = async () => await listBase("registers");
+  const { data, isLoading } = useQuery(["registers"], fetchData);
   if (isLoading) return <p>Cargando</p>
-
+console.log(data)
   return (
     <div>
-      <div className="flex gap-1">
-        <BaseSelect name="Carrera" onChange={(e) => setCareerId(e)} pluranName={`careers`} />
-        <BaseSelect name="Sección" onChange={(e) => setSectionId(e)} pluranName={`career/${careerId}/sections`} />
-        <BaseSelect name="Cursos" onChange={(e) => setCourseId(e)} pluranName={`career/${careerId}/courses`} />
-        <Button onClick={onSearch}>Buscar</Button>
-      </div>
+      {show&&(
+        <div className="flex gap-1">
+        <BaseSelect name="Departamentos" onChange={(e) => console.log(e)} pluranName={`departments`} />
+        <BaseSelect name="Cargo" onChange={(e) => console.log(e)} pluranName={`positions`} />
+        <Button onClick={()=>toast.success("Buscado exitosamente")}>Buscar</Button>
+        </div>
+      )}
       {data ?
         <Table>
-          <TableCaption>Lista de asistencias</TableCaption>
+          <TableCaption>Lista de registros</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">#</TableHead>
-              <TableHead>Carrera</TableHead>
-              <TableHead>Sección</TableHead>
-              <TableHead>Curso</TableHead>
+              <TableHead>Nombre</TableHead>
+              <TableHead>Departamento</TableHead>
+              <TableHead>Rol</TableHead>
               <TableHead>Fecha</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((attedace: ILattendace, index: number) => (
-              <TableRow key={attedace.id}>
+            {data.map((register: ILRegister, index: number) => (
+              <TableRow key={register.id}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell className="font-medium">{attedace.career_id}</TableCell>
-                <TableCell>{attedace.section_id}</TableCell>
-                <TableCell>{attedace.course_id}</TableCell>
-                <TableCell>{convertDate(attedace.date.toString())}</TableCell>
+                <TableCell className="font-medium">{register.user.name} {register.user.paternal_surname} {register.user.maternal_surname}</TableCell>
+                <TableCell>{register.user.department.name}</TableCell>
+                <TableCell>{register.user.position.name}</TableCell>
+                <TableCell>{convertDate(register.date.toString())}</TableCell>
+                <TableCell>
+                  <Avatar>
+                      <AvatarImage src={register.user.profile_picture_url} alt="@shadcn" />
+                      <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  </TableCell>
               </TableRow>
             ))}
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={4}>Total</TableCell>
+              <TableCell colSpan={5}>Total</TableCell>
               <TableCell className="text-right">{data.length}</TableCell>
             </TableRow>
           </TableFooter>
         </Table>
-        : <p className="text-center text-sm mt-4 text-gray-700">Seleccione la carrera, sección y curso para buscar las asistencias</p>}
+        : <p className="text-center text-sm mt-4 text-gray-700">Seleccione el departmento o cargo para filtrar registros</p>}
 
     </div>
   )

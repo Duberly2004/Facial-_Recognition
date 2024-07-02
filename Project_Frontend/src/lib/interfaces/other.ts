@@ -5,12 +5,26 @@ export interface ILBase extends IBase {
     id:number
 }
 
-export interface IAttendace {
-    career_id: number,
-    course_id: number,
+export interface IRegister {
     date: string,
-    section_id:number
 }
-export interface ILattendace extends IAttendace {
+export interface ILRegister extends IRegister {
     id:number
+    user:ILUser
+}
+export interface IUser {
+    email:string
+    password:string
+    profile_picture_url:string
+    name:string
+    paternal_surname:string
+    maternal_surname:string
+    status:number
+    
+}
+export interface ILUser extends IUser {
+    id:number
+    role:ILBase
+    position:ILBase
+    department:ILBase
 }

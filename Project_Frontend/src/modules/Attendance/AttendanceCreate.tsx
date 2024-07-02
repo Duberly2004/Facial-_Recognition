@@ -1,34 +1,22 @@
-import React from 'react'
-import AttendaceForm from './AttendaceForm'
 import { listBase } from '@/services/api.service';
 import { useQuery } from 'react-query';
 import { convertDate } from '@/lib/functions/convert';
-import AttendanceStudentList from './AttendanceStudentList';
+import Error500 from '@/pages/errors/Error500';
+import AttendaceList from './AttendaceList';
 
 export default function AttendanceCreate() {
-  const [endpoint, setEndpoint] = React.useState<string>("");
-
-  const id = window.localStorage.getItem('attendanceId')
-  const fetchData = async () => await listBase(endpoint);
-
-  const { data, isLoading } = useQuery(["attendances", endpoint], fetchData, {
-    enabled: !!endpoint, // solo habilita la consulta cuando el endpoint está definido
-  });
-
+  const fetchData = async () => await listBase("registers");
+  const { data, isLoading,error } = useQuery(["registers"], fetchData);
+  const date = new Date()
   if (isLoading) return <p>Cargando</p>
-  if(id && !data) {
-    setEndpoint(`attendance/${id}`)
-    console.log(id)
-  }
-  console.log(data)
+  if(error) return <Error500/>
   return (
     <div>
-      <AttendaceForm/>
       {data&&(
         <div>
-          <p className='my-3'>Fecha: {convertDate(data.date)}</p>
-          <img src={`${import.meta.env.VITE_API_URL}/video_feed/${id}`} alt="" />
-          <AttendanceStudentList attendaceId={data.id}/>
+          <p className='my-3'>Fecha: {convertDate(date.toString())}</p>
+          <img src={`${import.meta.env.VITE_API_URL}/video_feed`} alt="" />
+          <AttendaceList show={false}/>
         </div>
       )}
     </div>

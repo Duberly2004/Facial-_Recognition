@@ -2,17 +2,16 @@ import cv2
 import face_recognition
 import os
 import datetime
-from dao.DAOAttendanceStudent import DAOAttendanceStudent
-from dao.DAOStudent import DAOStudent
+from dao.DAORegister import DAOARegister
 from db_exel.exel import Exel
-file_names =  os.listdir('images') #Lista de los nombres de las imagenes
-students = DAOStudent().list_for_attendance()
+file_names =  os.listdir('uploads') #Lista de los nombres de las imagenes
 
 #########################
 cap = cv2.VideoCapture(0)
 class Face:
 
-    def face_detector(attendance_id):
+    def face_detector(users):
+        print(users)
         while True:
             ret,frame = cap.read()
             if ret==False:break
@@ -23,26 +22,27 @@ class Face:
                 for face_location in face_locations:
                     top, right, bottom, left = face_location
                     face_frame_encodings = face_recognition.face_encodings(frame,known_face_locations=[face_location])[0]
-                    for student in students:
-                        image = cv2.imread(student['avatar'])
+                    for user in users:
+                        print(user["id"])
+                        image = cv2.imread(user['profile_picture_url'])
                         if image is not None:
                             face_loc = face_recognition.face_locations(image)[0]
                             face_image_encodings = face_recognition.face_encodings(image,known_face_locations=[face_loc])
                             result = face_recognition.compare_faces(face_frame_encodings,face_image_encodings)
                             if result[0] == True:
-                                text = student['name']
+                                text = user['name']
                                 color = (125,220,0)
-                                exist = DAOAttendanceStudent().exists(attendance_id,student_id=student['id'])
+                                exist = DAOARegister().exists(user_id=user['id'])
                                 if not exist:
                                     print("Registrado")
                                     Exel.registerAttendance([
                                         [
-                                        student['name']+" "+student['paternal_surname']+" "+student['maternal_surname'],
-                                        str(datetime.datetime.now()),
-                                        student['section_name'],
-                                        "PRESENT"]
-                                    ])
-                                    DAOAttendanceStudent().create(attendance_id=attendance_id, student_id=student['id'], date=datetime.datetime.now(), status="PRESENT")
+                                            user['name']+" "+ user['paternal_surname']+" "+ user['maternal_surname'],
+                                            user['department']['name'],user['position']['name'],
+                                            str(datetime.datetime.now())]
+                                        ])
+                                        #Registrar aquí
+                                    DAOARegister.create(self=None,user_id=user["id"])
                                 else:
                                     break
                                 break

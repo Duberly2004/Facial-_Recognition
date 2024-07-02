@@ -1,0 +1,51 @@
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:duberly2004@localhost:3306/db_pretesis"
+}
+
+generator client {
+  provider = "prisma-client-py"
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String
+  user User[]
+}
+
+model Position {
+  id   Int    @id @default(autoincrement())
+  name String
+  user User[]
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  name String
+  user User[]
+}
+
+model User {
+  id                  Int        @id @default(autoincrement())
+  email               String     @unique
+  password            String
+  profile_picture_url String
+  name                String
+  paternal_surname    String
+  maternal_surname    String
+  status              Int        @default(0)
+  role                Role       @relation(fields: [role_id], references: [id])
+  role_id             Int
+  position            Position   @relation(fields: [position_id], references: [id])
+  position_id         Int
+  department          Department @relation(fields: [department_id], references: [id])
+  department_id       Int
+  registers             Register[]
+}
+
+model Register {
+  id      Int      @id @default(autoincrement())
+  user    User     @relation(fields: [user_id], references: [id],onDelete: Cascade)
+  user_id Int
+  date    DateTime @default(now())
+}

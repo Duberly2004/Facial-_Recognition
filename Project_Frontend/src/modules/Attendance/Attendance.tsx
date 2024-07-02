@@ -4,8 +4,8 @@ import { Factory, Video } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 
 const tags: Tag[] = [
-    {name: "Crear Asistencia",path: "/attendances/create",icon: <Video className='w-4'/>},
-    {name: "Asistencias",path: "/attendances",icon: <Factory className='w-4'/>}
+    {name: "Cámara",path: "/registers/create",icon: <Video className='w-4'/>},
+    {name: "Registros",path: "/registers",icon: <Factory className='w-4'/>}
 ];
 
 export default function Attendance() {
