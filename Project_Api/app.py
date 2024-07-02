@@ -35,6 +35,16 @@ async def users():
     await prisma.disconnect()
     return jsonify(users_data)
 
+@app.route("/user/<int:user_id>", methods=["DELETE"])
+async def delete_user(user_id):
+    prisma = Prisma()
+    await prisma.connect()
+    await prisma.user.delete(
+        where={"id": user_id}
+    )
+    await prisma.disconnect()
+    return '', 204
+
 #Creación de la ruta departments
 @app.route("/departments")
 async def departments():
@@ -189,6 +199,16 @@ async def registers():
     await prisma.disconnect()
     return jsonify(registers_data)
 
+@app.route("/register/<int:register_id>", methods=["DELETE"])
+async def delete_register(register_id):
+    prisma = Prisma()
+    await prisma.connect()
+    await prisma.register.delete(
+        where={"id": register_id}
+    )
+    await prisma.disconnect()
+    return '', 204
+
 @app.route('/video_feed')
 async def video_feed():
     prisma = Prisma()
@@ -198,7 +218,6 @@ async def video_feed():
     users_data = []
     for user in users_response:
         exist = await prisma.register.find_first(where={"user_id":user.id})
-        print(exist)
         if not exist:
             print("No exist")
             users_data.append({

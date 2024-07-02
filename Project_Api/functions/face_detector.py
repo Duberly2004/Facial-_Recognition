@@ -11,7 +11,6 @@ cap = cv2.VideoCapture(0)
 class Face:
 
     def face_detector(users):
-        print(users)
         while True:
             ret,frame = cap.read()
             if ret==False:break
@@ -23,7 +22,6 @@ class Face:
                     top, right, bottom, left = face_location
                     face_frame_encodings = face_recognition.face_encodings(frame,known_face_locations=[face_location])[0]
                     for user in users:
-                        print(user["id"])
                         image = cv2.imread(user['profile_picture_url'])
                         if image is not None:
                             face_loc = face_recognition.face_locations(image)[0]

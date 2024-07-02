@@ -1,7 +1,7 @@
 import BaseSelect from "@/components/selects/BaseSelect";
 import { Button } from "@/components/ui/button";
-import { listBase } from "@/services/api.service";
-import { useQuery } from "react-query";
+import { deleteBase, listBase } from "@/services/api.service";
+import { useQuery, useQueryClient } from "react-query";
 import { toast } from "sonner";
 import {
   Table,
@@ -16,13 +16,23 @@ import {
 import { ILRegister } from "@/lib/interfaces/other";
 import { convertDate } from "@/lib/functions/convert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ButtonDelete } from "@/components/Buttons";
 
 export default function AttendaceList({show=true}:{show?:boolean}) {
-
   const fetchData = async () => await listBase("registers");
-  const { data, isLoading } = useQuery(["registers"], fetchData);
+  const queryClient = useQueryClient()
+  const { data, isLoading } = useQuery({queryKey:"registers",queryFn:fetchData});
   if (isLoading) return <p>Cargando</p>
-console.log(data)
+  async function onDelete(id:number){
+    try {
+      await deleteBase(`register`,id)
+      toast.success("Eliminado correctamente")
+    } catch (error) {
+      toast.error("Ocurrión un error")
+    }finally{
+      queryClient.invalidateQueries({queryKey:"registers"})
+    }
+  }
   return (
     <div>
       {show&&(
@@ -58,12 +68,13 @@ console.log(data)
                       <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   </TableCell>
+                  <TableCell><ButtonDelete onClick={()=>onDelete(register.id)}/></TableCell>
               </TableRow>
             ))}
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={5}>Total</TableCell>
+              <TableCell colSpan={6}>Total</TableCell>
               <TableCell className="text-right">{data.length}</TableCell>
             </TableRow>
           </TableFooter>

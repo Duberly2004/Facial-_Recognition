@@ -33,8 +33,10 @@ import {
 } from "@/components/ui/table"
 import { getNameStatus } from "@/lib/functions/getName"
 import { UserAvatar } from "@/components/Avatar"
-import { listBase } from "@/services/api.service"
-import { useQuery } from "react-query"
+import { deleteBase, listBase } from "@/services/api.service"
+import { useQuery, useQueryClient } from "react-query"
+import { ButtonDelete } from "@/components/Buttons"
+import { toast } from "sonner"
 
 
 export type User = {
@@ -95,13 +97,33 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => (
       <div className="capitalize">{getNameStatus(row.original.status)}</div>
     ),
+  },
+  {
+    accessorKey: "operations",
+    header: "Estado",
+    cell: ({ row }) => {
+      const queryClient = useQueryClient()
+      async function onDelete(){
+        try {
+          await deleteBase(`user`,parseInt(row.original.id))
+          toast.success("Eliminado correctamente")
+        } catch (error) {
+          toast.error("Ocurrión un error")
+        }finally{
+          queryClient.invalidateQueries({queryKey:"users"})
+        }
+      }
+      return(
+        <div className="capitalize"><ButtonDelete onClick={onDelete} /></div>
+      )
+    }
   }
 ]
 
 export default function User() {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const fetchData = async ()=> await listBase("users")
-  const {data,isLoading,error} = useQuery({queryFn:fetchData})
+  const {data,isLoading,error} = useQuery({queryFn:fetchData,queryKey:"users"})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
