@@ -252,12 +252,30 @@ async def runScript():
         ])
     # Creacion de los usuarios
     if await prisma.user.count()==0:
-        await prisma.user.create_many(data=[
-            {"id":1,"email":"duberly.mondragon@tecsup.edu.pe","password":"Duberly##**2004","profile_picture_url":"uploads/duberly-ivan-mondragon-manchay.png","name":"Duberly Ivan","paternal_surname":"Mondragón","maternal_surname":"Manchay","role_id":1,"position_id":2,"department_id":1},
-            {"id":2,"email":"ethan.arredondo@tecsup.edu.pe","password":"Ethan##**2004","profile_picture_url":"uploads/ethan-sebastian-arredondo-yarihuaman.png","name":"Ethan Sebastian","paternal_surname":"Arredondo","maternal_surname":"Yarihuaman","role_id":1,"position_id":2,"department_id":1}
-        ])
-
-    await prisma.disconnect()
+        await prisma.user.create_many(data = [
+                {"id": 1, "email": "duberly.mondragon@tecsup.edu.pe", "password": "Duberly##**2004", "profile_picture_url": "uploads/duberly-ivan-mondragon-manchay.png", "name": "Duberly Ivan", "paternal_surname": "Mondragón", "maternal_surname": "Manchay", "role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 2, "email": "ethan.arredondo@tecsup.edu.pe", "password": "Ethan##**2004", "profile_picture_url": "uploads/ethan-sebastian-arredondo-yarihuaman.png", "name": "Ethan Sebastian", "paternal_surname": "Arredondo", "maternal_surname": "Yarihuaman", "role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 3, "email": "jesus.aguero@tecsup.edu.pe", "password": "Jesus##**2005", "profile_picture_url": "uploads/jesus-aguero-anchivilca.png", "name": "Jesus", "paternal_surname": "Aguero", "maternal_surname": "Anchivilca","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 4, "email": "jose.arcos@tecsup.edu.pe", "password": "Jose##**2003", "profile_picture_url": "uploads/jose-arcos-tejeda.png", "name": "Jose", "paternal_surname": "Arcos", "maternal_surname": "Tejeda","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 6, "email": "freddy.balboa@tecsup.edu.pe", "password": "Freddy##**2001", "profile_picture_url": "uploads/freddy-balboa-fuentes.png", "name": "Freddy", "paternal_surname": "Balboa", "maternal_surname": "Fuentes","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 7, "email": "david.balboa@tecsup.edu.pe", "password": "David##**2003", "profile_picture_url": "uploads/david-balboa-mercado.png", "name": "David", "paternal_surname": "Balboa", "maternal_surname": "Mercado","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 8, "email": "jeremy.bellido@tecsup.edu.pe", "password": "Jeremy##**2001", "profile_picture_url": "uploads/jeremy-bellido-nanez.png", "name": "Jeremy", "paternal_surname": "Bellido", "maternal_surname": "Nañez","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 9, "email": "sebastian.beteta@tecsup.edu.pe", "password": "Sebastian##**2003", "profile_picture_url": "uploads/sebastian-beteta-adauco.png", "name": "Sebastian", "paternal_surname": "Beteta", "maternal_surname": "Adauco","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 10, "email": "carlos.cabrera.r@tecsup.edu.pe", "password": "Carlos##**2004", "profile_picture_url": "uploads/carlos-cabrera-ricalde.png", "name": "Carlos", "paternal_surname": "Cabrera", "maternal_surname": "Ricalde","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 11, "email": "bruno.chigne@tecsup.edu.pe", "password": "Bruno##**2000", "profile_picture_url": "uploads/bruno-chigne-medina.png", "name": "Bruno", "paternal_surname": "Chigne", "maternal_surname": "Medina","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 12, "email": "jhon.churivanti@tecsup.edu.pe", "password": "Jhon##**2001", "profile_picture_url": "uploads/jhon-churivanti-alva.png", "name": "Jhon", "paternal_surname": "Churivanti", "maternal_surname": "Alva","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 13, "email": "max.cirineo@tecsup.edu.pe", "password": "Max##**2001", "profile_picture_url": "uploads/max-cirineo-alvarez.png", "name": "Max", "paternal_surname": "Cirineo", "maternal_surname": "Alvarez","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 14, "email": "adrian.coronel@tecsup.edu.pe", "password": "Adrian##**2001", "profile_picture_url": "uploads/adrian-coronel-mendoza.png", "name": "Adrian", "paternal_surname": "Coronel", "maternal_surname": "Mendoza","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 15, "email": "alvaro.cuba@tecsup.edu.pe", "password": "Alvaro##**2003", "profile_picture_url": "uploads/alvaro-cuba-porras.png", "name": "Alvaro", "paternal_surname": "Cuba", "maternal_surname": "Porras","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 16, "email": "harold.cutti@tecsup.edu.pe", "password": "Harold##**2005", "profile_picture_url": "uploads/harold-cutti-salazar.png", "name": "Harold", "paternal_surname": "Cutti", "maternal_surname": "Salazar","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 17, "email": "cielo.espinoza@tecsup.edu.pe", "password": "Cielo##**2002", "profile_picture_url": "uploads/cielo-espinoza-cortez.png", "name": "Cielo", "paternal_surname": "Espinoza", "maternal_surname": "Cortez","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 18, "email": "jared.garcia@tecsup.edu.pe", "password": "Jared##**2000", "profile_picture_url": "uploads/jared-garcia-borja.png", "name": "Jared", "paternal_surname": "Garcia", "maternal_surname": "Borja","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 19, "email": "antonio.guzman@tecsup.edu.pe", "password": "Antonio##**2001", "profile_picture_url": "uploads/antonio-guzman-giron.png", "name": "Antonio", "paternal_surname": "Guzman", "maternal_surname": "Giron","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 20, "email": "pedro.hernandez@tecsup.edu.pe", "password": "Pedro##**2000", "profile_picture_url": "uploads/pedro-hernandez-carhuajulca.png", "name": "Pedro", "paternal_surname": "Hernandez", "maternal_surname": "Carhuajulca","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 21, "email": "edilson.huaman@tecsup.edu.pe", "password": "Edilson##**2004", "profile_picture_url": "uploads/edilson-huaman-huanca.png", "name": "Edilson", "paternal_surname": "Huaman", "maternal_surname": "Huanca","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 23, "email": "william.postillos@tecsup.edu.pe", "password": "William##**2002", "profile_picture_url": "uploads/william-postillos-aquino.png", "name": "William", "paternal_surname": "Postillos", "maternal_surname": "Aquino","role_id": 1, "position_id": 2, "department_id": 1},
+                {"id": 24, "email": "renzo.remuzgo@tecsup.edu.pe", "password": "Renzo##**2000", "profile_picture_url": "uploads/renzo-remuzgo-davila.png", "name": "Renzo", "paternal_surname": "Remuzgo", "maternal_surname": "Dávila","role_id": 1, "position_id": 2, "department_id": 1}])
+        await prisma.disconnect()
     return "ok"
 
 #Ruta para obtener los datos del script
