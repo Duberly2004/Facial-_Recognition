@@ -3,7 +3,6 @@ from prisma import Prisma
 from flask_cors import CORS
 from functions.face_detector import Face
 import os
-import datetime
 #Creación de la aplicación en flask
 app = Flask(__name__,static_folder='uploads')
 cors = CORS(app)
@@ -39,6 +38,8 @@ async def users():
 async def delete_user(user_id):
     prisma = Prisma()
     await prisma.connect()
+    user = await prisma.user.find_unique(where={"id":user_id})
+    os.remove(user.profile_picture_url)
     await prisma.user.delete(
         where={"id": user_id}
     )

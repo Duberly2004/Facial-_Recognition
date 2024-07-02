@@ -4,7 +4,7 @@ import { Factory, Grip } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 
 const tags: Tag[] = [
-    {name: "Departementos",path: "/settings/departments",icon: <Factory className='w-4'/>},
+    {name: "Departamentos",path: "/settings/departments",icon: <Factory className='w-4'/>},
     {name: "Cargos",path: "/settings/positions",icon: <Grip className='w-4'/>},
 ];
 function Setting() {
