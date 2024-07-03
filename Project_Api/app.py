@@ -265,9 +265,9 @@ async def runScript():
     if await prisma.department.count()==0:
         await prisma.department.create_many(data=[
             {"id":1,"name":"Tecnología Digital"},
-            {"id":2,"name":"Quimica y Minería"},
-            {"id":3,"name":"Mecanica y Aviacíón"},
-            {"id":4,"name":"Electronica y Electrecidad"},
+            {"id":2,"name":"Química y Minería"},
+            {"id":3,"name":"Mecánica y Aviación"},
+            {"id":4,"name":"Electrónica y Electricidad"},
             {"id":5,"name":"Diseño y producción Industrial"}
         ])
     # Creacion de los usuarios

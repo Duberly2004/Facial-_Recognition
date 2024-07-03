@@ -1,14 +1,15 @@
-<h1 align="center">APi para el sistema de control de asistencias con IA</h1>
+<h1 align="center">Api del Sistema: "Registro de Ingreso y Salida de Personas con Reconocimiento Facial mediante IA"
+</h1>
+
 
 ### Preview 
 <img src="public/preview.png"/>
 ## Módulos
 
 - Módulo de Usuarios
-- Alumnos
-- Profesores
-- Asistencias
+- Registros
 - Cursos
+- Departamentos
 
 ## Tecnologías
 
@@ -21,6 +22,9 @@ Este proyecto utiliza las siguientes tecnologías:
 - opencv-python
 - MySQL
 - Docker 26.1.3
+
+## MER preview
+<img src="public/mer.png"/>
 
 ## Cómo levantar el proyecto
 
