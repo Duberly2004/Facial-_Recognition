@@ -27,7 +27,7 @@ export default function BaseDialog({isEdit,name,base,pluralName,singularName}:Pr
       <DialogTrigger asChild>
         {isEdit?
         <ButtonEdit onClick={() => null} />
-        :<Button className="bg-sky-500 hover:bg-sky-600" size={"sm"}>Nuevo</Button>}
+        :<Button size="sm">Nuevo</Button>}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -37,7 +37,7 @@ export default function BaseDialog({isEdit,name,base,pluralName,singularName}:Pr
             <BaseForm pluralName={pluralName} singularName={singularName} base={base} setIsPending={setIsPending} setIsOpen={setIsOpen}/>
         </div>
         <DialogFooter>
-          <Button disabled={isPending} className="bg-sky-600 hover:bg-sky-700" form={`${singularName}-form`} type="submit">
+          <Button disabled={isPending} form={`${singularName}-form`} type="submit">
             {isPending?
             <Loader2 className="animate-spin"/>:null}
             {isEdit?"Guardar cambios":"Crear"} 

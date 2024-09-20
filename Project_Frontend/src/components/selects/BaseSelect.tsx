@@ -26,7 +26,7 @@ const BaseSelect = React.forwardRef<HTMLButtonElement, Props>(({ defaultValue, o
 
     return (
         <Select onValueChange={(item) => onChange(parseInt(item))}>
-            <SelectTrigger ref={ref} className="w-full bg-[#EFF0F6] dark:bg-gray-900">
+            <SelectTrigger ref={ref} className="w-full ">
                 <SelectValue placeholder={defaultValue ? defaultValue : name} />
             </SelectTrigger>
             <SelectContent>

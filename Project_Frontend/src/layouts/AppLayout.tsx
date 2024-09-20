@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { AppNavbar } from "@/components/navbars/AppNavbar";
 import { Toaster } from "sonner";
-import logo from "../assets/logo.jpeg"
+import logo from "../assets/logo.png"
 function AppLayout() {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -26,7 +26,7 @@ function AppLayout() {
             <Link to="/home" className="flex items-center">
               <img src={logo} className="ml-2 w-[3rem] h-16 origin-left duration-200 scale-100" />
             {isExpanded ? (
-              <h1 className="text-4xl font-bold ml-1">G<span className="text-primary">9</span></h1>
+              <h1 className="text-2xl font-bold ml-1">BioDefender</h1>
               ) :null}
             </Link>
           </div>

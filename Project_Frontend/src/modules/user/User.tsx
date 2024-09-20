@@ -100,7 +100,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "operations",
-    header: "Estado",
+    header: "Operaciones",
     cell: ({ row }) => {
       const queryClient = useQueryClient()
       async function onDelete(){

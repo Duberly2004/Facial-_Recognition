@@ -79,13 +79,13 @@ export function SidebarItem({ name, url, icon, isExpanded }: Props) {
         } h-[3.8rem] mx-auto`}
     >
       <div
-        className={`${is_active && "bg-primary group-active:text-white dark:text-black"
-          } p-2 w-full group-hover:bg-primary group-hover:text-white dark:group-hover:text-black rounded transition-all duration-75 origin-left mt-5 flex gap-5 ${is_active &&
+        className={`${is_active && "bg-primary group-active:text-foreground text-background"
+          } p-2 w-full group-hover:bg-primary group-hover:text-background rounded transition-all duration-75 origin-left mt-5 flex gap-5 ${is_active &&
           isExpanded &&
-          "bg-primary origin-left text-white dark:text-black"
+          "bg-primary origin-left text-background"
           }`}
       >
-        <span className={`text-primary group-hover:text-white ${is_active && 'text-white'}`}>{icon}</span>
+        <span className={`text-primary group-hover:text-background ${is_active && 'text-background'}`}>{icon}</span>
         <span className={`${!isExpanded && "scale-0"} origin-left`}>
           {name}
         </span>

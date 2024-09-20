@@ -72,8 +72,8 @@ function Table({ data ,name,singularName,pluralName}: Props) {
         columns={columns}
         data={filteredRecords}
         fixedHeader
-        theme="dark"
-        customStyles={{head:{style:{background:"#00b1f7",color:"white"}}}}
+        theme="ligth"
+        customStyles={{head:{style:{background:"#FFFFFF",color:"black"}}}}
       />
     </section>
   );
