@@ -1,18 +1,62 @@
 from flask import Flask ,jsonify,send_from_directory,Response,request
-from prisma import Prisma
+from prisma import Prisma,register
 from flask_cors import CORS
 from functions.face_detector import Face
+from others.Enums import ERole, EUserType
+from controllers.TeacherController import TeacherController
+from controllers.StudentController import StudentController
+from controllers.OtherController import OtherController
+from db.Script import Script
 import os
-#Creación de la aplicación en flask
+
 app = Flask(__name__,static_folder='uploads')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-#Creación de la ruta ping
+#Ping
 @app.route("/")
 def home():
     return "Server listening"
 
+#user_types
+@app.route(f'/{ERole.ADMIN}/user_types')
+async def user_types():
+    return await OtherController().user_types()
+
+@app.route(f'/{ERole.ADMIN}/courses')
+async def courses():
+    return await OtherController().courses()
+
+@app.route(f'/{ERole.ADMIN}/cycles')
+async def cycles():
+    return await OtherController().cycles()
+
+@app.route(f'/{ERole.ADMIN}/careers')
+async def careers():
+    return await OtherController().careers()
+
+@app.route(f'/{ERole.ADMIN}/sections')
+async def sections():
+    return await OtherController().sections()
+
+#----Teachers---
+@app.route(f'/{ERole.ADMIN}/teachers',methods=["GET","POST","DELETE"])
+async def teachers():
+    if request.method == "GET":
+        return await TeacherController().list()
+    if request.method == "POST":
+        return await TeacherController().create(request=request)
+    if request.method == "DELETE":
+        return await TeacherController().delete()
+
+#----Students---
+@app.route(f'/{ERole.ADMIN}/students',methods=["GET","POST","DELETE"])
+async def students():
+    if request.method == "GET":
+        return await StudentController().list()
+    if request.method == "POST":
+        return await StudentController().create(request=request)
+    
 #Creación de la ruta users
 @app.route("/users")
 async def users():
@@ -99,7 +143,6 @@ async def delete_department(department_id):
     await prisma.disconnect()
     return '', 204
 
-
 #Creación de la ruta positions
 @app.route("/positions")
 async def positions():
@@ -152,22 +195,6 @@ async def delete_position(position_id):
     )
     await prisma.disconnect()
     return '', 204
-
-#Creación de la ruta roles
-@app.route("/roles")
-async def roles():
-    prisma = Prisma()
-    await prisma.connect()
-    role_response = await prisma.role.find_many()
-    roles_data = [
-        {
-            "id":role.id,
-            "name":role.name
-
-        }for role in role_response
-    ]
-    await prisma.disconnect()
-    return jsonify(roles_data)
 
 #Creación de la ruta registros
 @app.route('/registers')
@@ -245,128 +272,26 @@ async def video_feed():
       mimetype="multipart/x-mixed-replace; boundary=frame")
 
 #Ruta para ejecutar el script
-@app.route('/runScript')
-async def runScript():
-    prisma = Prisma()
-    await prisma.connect()
-    #Creación de los roles
-    if await prisma.role.count()==0:
-        await prisma.role.create_many(data=[
-            {"id":1,"name":"user"},
-            {"id":2,"name":"admin"}
-        ])
-    # Creación de las cargos
-    if await prisma.position.count()==0:
-        await prisma.position.create_many(data=[
-            {"id":1,"name":"Profesor"},
-            {"id":2,"name":"Estudiante"}
-        ])
-    # Creación de los departmentos
-    if await prisma.department.count()==0:
-        await prisma.department.create_many(data=[
-            {"id":1,"name":"Tecnología Digital"},
-            {"id":2,"name":"Química y Minería"},
-            {"id":3,"name":"Mecánica y Aviación"},
-            {"id":4,"name":"Electrónica y Electricidad"},
-            {"id":5,"name":"Diseño y producción Industrial"}
-        ])
-    # Creacion de los usuarios
-    if await prisma.user.count()==0:
-        await prisma.user.create_many(data = [
-                {"id": 1, "email": "duberly.mondragon@tecsup.edu.pe", "password": "Duberly##**2004", "profile_picture_url": "uploads/duberly-ivan-mondragon-manchay.png", "name": "Duberly Ivan", "paternal_surname": "Mondragón", "maternal_surname": "Manchay", "role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 2, "email": "ethan.arredondo@tecsup.edu.pe", "password": "Ethan##**2004", "profile_picture_url": "uploads/ethan-sebastian-arredondo-yarihuaman.png", "name": "Ethan Sebastian", "paternal_surname": "Arredondo", "maternal_surname": "Yarihuaman", "role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 3, "email": "jesus.aguero@tecsup.edu.pe", "password": "Jesus##**2005", "profile_picture_url": "uploads/jesus-aguero-anchivilca.png", "name": "Jesus", "paternal_surname": "Aguero", "maternal_surname": "Anchivilca","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 4, "email": "jose.arcos@tecsup.edu.pe", "password": "Jose##**2003", "profile_picture_url": "uploads/jose-arcos-tejeda.png", "name": "Jose", "paternal_surname": "Arcos", "maternal_surname": "Tejeda","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 6, "email": "freddy.balboa@tecsup.edu.pe", "password": "Freddy##**2001", "profile_picture_url": "uploads/freddy-balboa-fuentes.png", "name": "Freddy", "paternal_surname": "Balboa", "maternal_surname": "Fuentes","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 7, "email": "david.balboa@tecsup.edu.pe", "password": "David##**2003", "profile_picture_url": "uploads/david-balboa-mercado.png", "name": "David", "paternal_surname": "Balboa", "maternal_surname": "Mercado","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 8, "email": "jeremy.bellido@tecsup.edu.pe", "password": "Jeremy##**2001", "profile_picture_url": "uploads/jeremy-bellido-nanez.png", "name": "Jeremy", "paternal_surname": "Bellido", "maternal_surname": "Nañez","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 9, "email": "sebastian.beteta@tecsup.edu.pe", "password": "Sebastian##**2003", "profile_picture_url": "uploads/sebastian-beteta-adauco.png", "name": "Sebastian", "paternal_surname": "Beteta", "maternal_surname": "Adauco","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 10, "email": "carlos.cabrera.r@tecsup.edu.pe", "password": "Carlos##**2004", "profile_picture_url": "uploads/carlos-cabrera-ricalde.png", "name": "Carlos", "paternal_surname": "Cabrera", "maternal_surname": "Ricalde","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 11, "email": "bruno.chigne@tecsup.edu.pe", "password": "Bruno##**2000", "profile_picture_url": "uploads/bruno-chigne-medina.png", "name": "Bruno", "paternal_surname": "Chigne", "maternal_surname": "Medina","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 12, "email": "jhon.churivanti@tecsup.edu.pe", "password": "Jhon##**2001", "profile_picture_url": "uploads/jhon-churivanti-alva.png", "name": "Jhon", "paternal_surname": "Churivanti", "maternal_surname": "Alva","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 13, "email": "max.cirineo@tecsup.edu.pe", "password": "Max##**2001", "profile_picture_url": "uploads/max-cirineo-alvarez.png", "name": "Max", "paternal_surname": "Cirineo", "maternal_surname": "Alvarez","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 14, "email": "adrian.coronel@tecsup.edu.pe", "password": "Adrian##**2001", "profile_picture_url": "uploads/adrian-coronel-mendoza.png", "name": "Adrian", "paternal_surname": "Coronel", "maternal_surname": "Mendoza","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 15, "email": "alvaro.cuba@tecsup.edu.pe", "password": "Alvaro##**2003", "profile_picture_url": "uploads/alvaro-cuba-porras.png", "name": "Alvaro", "paternal_surname": "Cuba", "maternal_surname": "Porras","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 16, "email": "harold.cutti@tecsup.edu.pe", "password": "Harold##**2005", "profile_picture_url": "uploads/harold-cutti-salazar.png", "name": "Harold", "paternal_surname": "Cutti", "maternal_surname": "Salazar","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 17, "email": "cielo.espinoza@tecsup.edu.pe", "password": "Cielo##**2002", "profile_picture_url": "uploads/cielo-espinoza-cortez.png", "name": "Cielo", "paternal_surname": "Espinoza", "maternal_surname": "Cortez","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 18, "email": "jared.garcia@tecsup.edu.pe", "password": "Jared##**2000", "profile_picture_url": "uploads/jared-garcia-borja.png", "name": "Jared", "paternal_surname": "Garcia", "maternal_surname": "Borja","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 19, "email": "antonio.guzman@tecsup.edu.pe", "password": "Antonio##**2001", "profile_picture_url": "uploads/antonio-guzman-giron.png", "name": "Antonio", "paternal_surname": "Guzman", "maternal_surname": "Giron","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 20, "email": "pedro.hernandez@tecsup.edu.pe", "password": "Pedro##**2000", "profile_picture_url": "uploads/pedro-hernandez-carhuajulca.png", "name": "Pedro", "paternal_surname": "Hernandez", "maternal_surname": "Carhuajulca","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 21, "email": "edilson.huaman@tecsup.edu.pe", "password": "Edilson##**2004", "profile_picture_url": "uploads/edilson-huaman-huanca.png", "name": "Edilson", "paternal_surname": "Huaman", "maternal_surname": "Huanca","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 23, "email": "william.postillos@tecsup.edu.pe", "password": "William##**2002", "profile_picture_url": "uploads/william-postillos-aquino.png", "name": "William", "paternal_surname": "Postillos", "maternal_surname": "Aquino","role_id": 1, "position_id": 2, "department_id": 1},
-                {"id": 24, "email": "renzo.remuzgo@tecsup.edu.pe", "password": "Renzo##**2000", "profile_picture_url": "uploads/renzo-remuzgo-davila.png", "name": "Renzo", "paternal_surname": "Remuzgo", "maternal_surname": "Dávila","role_id": 1, "position_id": 2, "department_id": 1}])
-        await prisma.disconnect()
+@app.route('/run_script')
+async def run_script():
+    await Script().run()
     return "ok"
 
 #Ruta para obtener los datos del script
-@app.route('/getScript')
-async def getScript():
-    prisma = Prisma()
-    await prisma.connect()
-    roles_response = await prisma.role.find_many()
-    position_response = await prisma.position.find_many()
-    department_response = await prisma.department.find_many()
-    users_response = await prisma.user.find_many()
-    roles_data = [
-        {
-            "id":role.id,
-            "name":role.name
-
-        }for role in roles_response
-    ]
-    positions_data = [
-        {
-            "id":position.id,
-            "name":position.name
-
-        }for position in position_response
-    ]
-    departments_data = [
-        {
-            "id":department.id,
-            "name":department.name
-
-        }for department in department_response
-    ]
-    users_data = [
-        {
-            "id":user.id,
-            "email":user.email,
-            "name":user.name,
-            "profile_picture_url":os.environ.get("API_URL") + "/" + user.profile_picture_url,
-            "paternal_surname":user.paternal_surname,
-            "maternal_surname":user.maternal_surname,
-            "status":user.status
-        }for user in users_response
-    ]
-
-    data = {
-        "roles":roles_data,
-        "postitions":positions_data,
-        "departmens":departments_data,
-        "users":users_data,
-    }
-    await prisma.disconnect()
+@app.route('/get_script')
+async def get_script():
+    data = await Script().get()
     return jsonify(data)
     
 #Ruta para eliminar los datos del script
-@app.route('/deleteScript')
-async def deleteScript():
-    prisma = Prisma()
-    await prisma.connect()
-    #Eliminamos las tablas
-    await prisma.register.delete_many()
-    await prisma.user.delete_many()
-    await prisma.role.delete_many()
-    await prisma.position.delete_many()
-    await prisma.department.delete_many()
-    await prisma.disconnect()
+@app.route('/delete_script')
+async def delete_script():
+    await Script().delete()
     return "ok"
 
 @app.route('/uploads/<path:filename>')
 def serve_static(filename):
     return send_from_directory(app.static_folder, filename)
 
-
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

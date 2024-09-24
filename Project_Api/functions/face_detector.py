@@ -9,7 +9,6 @@ file_names =  os.listdir('uploads') #Lista de los nombres de las imagenes
 #########################
 cap = cv2.VideoCapture(0)
 class Face:
-
     def face_detector(users):
         while True:
             ret,frame = cap.read()

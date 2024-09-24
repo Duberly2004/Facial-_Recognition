@@ -7,45 +7,125 @@ generator client {
   provider = "prisma-client-py"
 }
 
-model Role {
-  id   Int    @id @default(autoincrement())
+model role {
+  id Int @id @default(autoincrement())
+  name String @unique
+  users user[]
+}
+
+model user_type {
+  id Int @id @default(autoincrement())
+  name String @unique
+  users user[]
+}
+
+model course {
+  id Int @id @default(autoincrement())
+  name String @unique
+  code String @db.Char(6)
+  career_courses career_course[]
+}
+
+model career {
+  id Int @id @default(autoincrement())
+  name String @unique
+  code String @db.Char(6)
+  students student[]
+  career_courses career_course[]
+}
+
+model section {
+  id Int @id @default(autoincrement())
+  name String @unique
+  students student[]
+  career_courses career_course[]
+}
+
+model cycle {
+  id Int @id @default(autoincrement())
+  name String @unique
+  students student[]
+  career_courses career_course[]
+}
+
+model user {
+  id Int @id @default(autoincrement())
+  email String @unique
+  password String @db.Text
+  photo_url String?
+  code String @db.Char(6) @unique
   name String
-  user User[]
+  lastname String
+  is_active Boolean? @default(true)
+  is_admin Boolean? @default(false)
+  role role @relation(fields: [role_id],references: [id],onDelete: Cascade)
+  role_id Int
+  user_type user_type @relation(fields: [user_type_id],references: [id],onDelete: Cascade)
+  user_type_id Int
+  student student?
+  teacher teacher?
 }
 
-model Position {
-  id   Int    @id @default(autoincrement())
-  name String
-  user User[]
+model student {
+  id Int @id @default(autoincrement())
+  user_id Int @unique
+  user user @relation(fields: [user_id],references: [id],onDelete: Cascade)
+  cycle cycle? @relation(fields: [cycle_id],references: [id],onDelete: SetNull)
+  cycle_id Int?
+  section section? @relation(fields: [section_id],references: [id],onDelete: SetNull)
+  section_id Int?
+  career career? @relation(fields: [career_id],references: [id],onDelete: SetNull)
+  career_id Int?
+  attendances attendance[]
+  student_career_courses student_career_course[]
 }
 
-model Department {
-  id   Int    @id @default(autoincrement())
-  name String
-  user User[]
+model teacher {
+  id Int @id @default(autoincrement())
+  user_id Int @unique
+  user user @relation(fields: [user_id],references: [id],onDelete: Cascade)
+  teacher_career_courses teacher_career_course[]
 }
 
-model User {
-  id                  Int        @id @default(autoincrement())
-  email               String     @unique
-  password            String
-  profile_picture_url String
-  name                String
-  paternal_surname    String
-  maternal_surname    String
-  status              Int        @default(0)
-  role                Role       @relation(fields: [role_id], references: [id])
-  role_id             Int
-  position            Position   @relation(fields: [position_id], references: [id])
-  position_id         Int
-  department          Department @relation(fields: [department_id], references: [id])
-  department_id       Int
-  registers             Register[]
+model career_course {
+  id Int @id @default(autoincrement())
+  day_week Int @db.TinyInt
+  time_start DateTime
+  time_end DateTime
+  section section @relation(fields: [section_id],references: [id],onDelete: Cascade)
+  section_id Int 
+  cycle cycle @relation(fields: [cycle_id],references: [id],onDelete: Cascade)
+  cycle_id Int 
+  career career @relation(fields: [career_id],references: [id])
+  career_id Int
+  course course @relation(fields: [course_id],references: [id])
+  course_id Int
+  attendances attendance[]
+  teacher_career_courses teacher_career_course[]
+  student_career_courses student_career_course[]
 }
 
-model Register {
-  id      Int      @id @default(autoincrement())
-  user    User     @relation(fields: [user_id], references: [id],onDelete: Cascade)
-  user_id Int
-  date    DateTime @default(now())
+model attendance {
+  id Int @id @default(autoincrement())
+  create_at DateTime? @default(now())
+  student student @relation(fields: [student_id],references: [id],onDelete: Cascade)
+  student_id Int 
+  career_course career_course @relation(fields: [career_course_id],references: [id],onDelete: Cascade)
+  career_course_id Int
+}
+
+model teacher_career_course {
+  id Int @id @default(autoincrement())
+  career_course career_course @relation(fields: [career_course_id],references: [id],onDelete: Cascade)
+  career_course_id Int
+  teacher teacher @relation(fields: [teacher_id],references: [id],onDelete: Cascade)
+  teacher_id Int 
+}
+
+model student_career_course {
+  id Int @id @default(autoincrement())
+  career_course career_course @relation(fields: [career_course_id],references: [id],onDelete: Cascade)
+  career_course_id Int
+  student student @relation(fields: [student_id],references: [id],onDelete: Cascade)
+  student_id Int 
 }

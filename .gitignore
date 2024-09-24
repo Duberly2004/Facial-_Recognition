@@ -2,3 +2,5 @@ Project_Api/.env
 Project_Frontend/.env
 __pycache__
 __pycache__/
+Project_Api/venv/
+venv
