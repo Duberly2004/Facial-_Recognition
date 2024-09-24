@@ -28,3 +28,18 @@ export interface ILUser extends IUser {
     position:ILBase
     department:ILBase
 }
+
+export interface User{
+    id:number
+    name:string
+    fullname:string
+    email:string
+    is_active:boolean
+    code:string
+}
+
+export interface Base {
+    id:number
+    name:string
+    code?:string
+}

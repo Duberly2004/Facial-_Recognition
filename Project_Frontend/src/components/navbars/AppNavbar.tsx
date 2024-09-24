@@ -14,16 +14,29 @@ interface Item {
   url: string
   icon: React.ReactNode
 }
-const items: Item[] = [
+const teacher_items: Item[] = [
   {
     name: "Registros",
-    url: "/registers",
+    url: "/teacher/registers",
     icon: <FilePlus2 />,
+  }
+]
+
+const admin_items:Item[]=[
+  {
+    name: "Alumnos",
+    url: "/admin/students",
+    icon: <Users />,
   },
   {
-    name: "Usuarios",
-    url: "/users",
+    name: "Profesores",
+    url: "/admin/teachers",
     icon: <Users />,
+  },
+  {
+    name: "Configuración",
+    url: "/admin/settings",
+    icon: <Settings />,
   },
 ]
 
@@ -35,10 +48,9 @@ export function AppNavbar({ isExpanded, btnUpdateMenuVisibility }: NavbarProps) 
   return (
     <nav className="pt-6 h-screen overflow-y-auto pb-60">
       <div className="relative">
-        {items.map((data, index) => (
+        {[...teacher_items,...admin_items].map((data, index) => (
           <SidebarItem key={index} {...data} isExpanded={isExpanded} />
         ))}
-        <SidebarItem name="Configuración" url="/settings/departments" icon={<Settings />} isExpanded={isExpanded} /> 
       </div>
       <TooltipProvider delayDuration={10}>
         <Tooltip>
@@ -69,7 +81,7 @@ interface Props {
 
 export function SidebarItem({ name, url, icon, isExpanded }: Props) {
   const location = useLocation();
-  const is_active = location.pathname.split("/")[1] === url.split("/")[1];
+  const is_active = location.pathname.split("/")[2] === url.split("/")[2];
   return (
     <NavLink
       to={url}
@@ -79,13 +91,13 @@ export function SidebarItem({ name, url, icon, isExpanded }: Props) {
         } h-[3.8rem] mx-auto`}
     >
       <div
-        className={`${is_active && "bg-primary group-active:text-foreground text-background"
-          } p-2 w-full group-hover:bg-primary group-hover:text-background rounded transition-all duration-75 origin-left mt-5 flex gap-5 ${is_active &&
+        className={`${is_active && "bg-foreground text-background "
+          } p-2 w-full rounded transition-all duration-75 origin-left mt-5 flex gap-5 ${is_active &&
           isExpanded &&
-          "bg-primary origin-left text-background"
+          "origin-left"
           }`}
       >
-        <span className={`text-primary group-hover:text-background ${is_active && 'text-background'}`}>{icon}</span>
+        <span>{icon}</span>
         <span className={`${!isExpanded && "scale-0"} origin-left`}>
           {name}
         </span>

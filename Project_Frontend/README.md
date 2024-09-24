@@ -30,3 +30,40 @@ npm install
 npm run dev
 ```
 4. Visita `http://localhost:5173`.
+
+
+
+     {  children: [
+      {
+        path: "registers",
+        element: <Attendance />,
+        children:[
+          {
+            path: "",
+            element: <AttendaceList/>,
+          },
+          {
+            path: "/registers/create",
+            element: <AttendanceCreate/>,
+          },
+        ]
+      },
+      {
+        path: "/users",
+        element: <User />,
+      },
+      {
+        path: "/settings",
+        element: <Setting />,
+        children:[
+          {
+            path: "/settings/departments",
+            element: <Department/>,
+          },
+          {
+            path: "/settings/positions",
+            element: <Position/>,
+          },
+        ]
+      },
+    ]

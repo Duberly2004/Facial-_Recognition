@@ -11,9 +11,9 @@ export default function LateralMenu({tags}:Props) {
   return (
       <div className="w-48">
         {tags.map((tag,index) => (
-          <div onClick={()=>navigateTo(tag.path.toString())} key={index} className={`${location.pathname===tag.path? "bg-primary hover:bg-none text-background":""} dark:hover:bg-sky-950 hover:bg-primary hover:text-background`}>
-            <hr className="my-2" />
-            <div key={index} className="px-2 flex gap-1 items-center text-sm cursor-pointer">
+          <div onClick={()=>navigateTo(tag.path.toString())} key={index} className={`${location.pathname===tag.path? "bg-primary hover:bg-none text-background":""} hover:bg-primary hover:text-background rounded-md cursor-pointer`}>
+            <hr className="my-2 border-none" />
+            <div key={index} className="px-2 flex gap-1 items-center text-sm">
             {tag.icon}{tag.name}
             </div>
             <hr className="my-2" />

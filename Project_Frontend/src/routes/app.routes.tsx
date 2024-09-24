@@ -1,48 +1,23 @@
 import AppLayout from "@/layouts/AppLayout";
-import AttendaceList from "@/modules/Attendance/AttendaceList";
-import Attendance from "@/modules/Attendance/Attendance";
-import AttendanceCreate from "@/modules/Attendance/AttendanceCreate";
-import Department from "@/modules/admin/Department";
-import Position from "@/modules/admin/Position";
-import User from "@/modules/user/User";
-import Setting from "@/pages/Setting";
-const appRouter = [
+import Login from "@/pages/Login";
+import { RouteObject } from "react-router-dom";
+import admin_routes from "./admin.routes";
+import { teacher_routes } from "./teacher.routes";
+
+const appRouter:RouteObject[] = [
   {
     path: "/",
-    element: <AppLayout />,
-    children: [
-      {
-        path: "registers",
-        element: <Attendance />,
-        children:[
-          {
-            path: "",
-            element: <AttendaceList/>,
-          },
-          {
-            path: "/registers/create",
-            element: <AttendanceCreate/>,
-          },
-        ]
-      },
-      {
-        path: "/users",
-        element: <User />,
-      },
-      {
-        path: "/settings",
-        element: <Setting />,
-        children:[
-          {
-            path: "/settings/departments",
-            element: <Department/>,
-          },
-          {
-            path: "/settings/positions",
-            element: <Position/>,
-          },
-        ]
-      },
-    ]
-}]
+    element: <Login/>,
+  },
+  {
+    path:"/admin",
+    element:<AppLayout/>,
+    children: admin_routes
+  },
+  {
+    path:"/teacher",
+    element:<AppLayout/>,
+    children: teacher_routes
+  }
+]
 export default appRouter
