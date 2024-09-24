@@ -3,7 +3,7 @@ from flask import jsonify
 from others.Password import Password
 from others.Functions import Functions
 from others.Enums import ERole, EUserType
-from others.Errors import error_exist 
+from others.Messages import error_exist ,error_not_found
 class TeacherController:
     prisma = Prisma()
     async def _init_(self):
@@ -20,9 +20,9 @@ class TeacherController:
         if user: return error_exist,400
         #Buscar rol
         role = await self.prisma.role.find_unique(where={"name":ERole.USER})
-        if role is None : return 404
+        if role is None : return error_not_found, 404
         user_type = await self.prisma.user_type.find_unique(where={"name":EUserType.TEACHER})
-        if user_type is None : return 404
+        if user_type is None : return error_not_found, 404
 
         code = functions.generate_ramdom_code()
         password_code = functions.generate_ramdom_code(8)
@@ -33,7 +33,7 @@ class TeacherController:
                         "name":name,
                         "lastname":lastname,
                         "email":email,
-                        "password":await password.encript(),
+                        "password":password.encript(),
                         "code":code,
                         "role_id":role.id,
                         "user_type_id":user_type.id
@@ -41,7 +41,7 @@ class TeacherController:
                     }
         })
         await self.prisma.disconnect()
-        return jsonify({"email":email,"password":code})
+        return jsonify({"email":email,"password":password_code})
     
     async def list(self):
         await self.prisma.connect()

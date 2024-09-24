@@ -1,1 +1,0 @@
-error_exist = "This data already exist"

@@ -1,0 +1,5 @@
+error_exist = "This data already exist"
+error_not_found = "Not found"
+error_bad_request = "Bad Request"
+error_server_error = "Internal server error"
+error_invalid_credentials = "Invalid credentials"

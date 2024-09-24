@@ -6,6 +6,7 @@ from others.Enums import ERole, EUserType
 from controllers.TeacherController import TeacherController
 from controllers.StudentController import StudentController
 from controllers.OtherController import OtherController
+from controllers.AuthController import AuthController
 from db.Script import Script
 import os
 
@@ -56,7 +57,12 @@ async def students():
         return await StudentController().list()
     if request.method == "POST":
         return await StudentController().create(request=request)
-    
+
+#----Auth----
+@app.route('/login')
+async def login():
+    return await AuthController().login(request=request)
+
 #Creación de la ruta users
 @app.route("/users")
 async def users():

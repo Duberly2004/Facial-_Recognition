@@ -19,7 +19,8 @@ class OtherController:
         await self.prisma.connect()
         data = [{
                 "id":item.id,
-                "name":item.name
+                "name":item.name,
+                "code":item.code,
             } for item in await self.prisma.course.find_many()]
         await self.prisma.disconnect()
         return jsonify(data)
@@ -28,7 +29,8 @@ class OtherController:
         await self.prisma.connect()
         data = [{
                 "id":item.id,
-                "name":item.name
+                "name":item.name,
+                "code":item.code,
             } for item in await self.prisma.career.find_many()]
         await self.prisma.disconnect()
         return jsonify(data)
